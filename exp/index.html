@@ -1,0 +1,31 @@
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<div id="app">
+    <lista-usuarios v-bind:items="usuarios"></lista-usuarios>
+</div>
+
+<script>
+    let listaUsuarios= Vue.component('listaUsuarios',{
+        template: `<ul>
+                        <li v-for="item in items" :key="item.id.value">
+                            {{item.email}}
+                        </li>
+                    </ul>`,
+        props:['items']
+    })
+
+    let app= new Vue({
+        el:"#app",
+        data(){
+            return{
+                usuarios:[]
+            }
+        },
+        created(){
+            fetch("https://randomuser.me/api/?results=5")
+            .then(res=>res.json())
+            .then(data=>{this.usuarios=data.results; console.log(data.results)});
+        }
+
+    })
+</script>
