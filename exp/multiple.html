@@ -1,0 +1,65 @@
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+<div id="app">
+    <lista-grupos v-bind:items="grupos" v-bind:agregar="agregarevt"></lista-grupos>
+    <button v-on:click="enviar" v-show="grupos.length>0">Enviar</button>
+</div>
+
+<script>
+    let listaGrupos= Vue.component('listaGrupos',{
+        template: `<div>
+                    <ul>
+                        <li v-for="item in items">
+                            <h3>{{item.nombre}}</h3>
+                            <small>{{item.categoria}}</small>
+                        </li>
+                    </ul>
+                    <select v-model="categoria">
+                        <option disabled value="">Selecciona categoria</option>
+                        <option>A</option>
+                        <option>B</option>
+                        <option>C</option>
+                    </select>
+                    <textarea v-model="texto" v-on:input="cambio()"></textarea>
+                    <label> Cantidad de elementos a agregar: {{lineas}} </label>
+                    <button v-on:click="agregando()" v-show="lineas>0 && categoria">Agregar</button>
+                    </div>`,
+        props:['items', 'agregar'],
+        data(){
+            return{
+                texto:'',
+                categoria:'',
+                lineas:0,
+            }
+        },
+        methods:{
+            cambio:function (){
+                this.lineas=this.texto.split("\n").length;
+            },
+            agregando:function(){
+                this.agregar(this.texto, this.categoria);
+                Object.assign(this.$data, this.$options.data.call(this)); //limpiar controles
+            }
+        }
+    })
+
+    let app= new Vue({
+        el:"#app",
+        data(){
+            return{
+                grupos:[],
+            }
+        },
+        methods:{
+            agregarevt:function(txt,ctg){
+                txt.split('\n').map(
+                    (x)=>this.grupos.push({nombre:x?x:'n/s', categoria:ctg})
+                );
+            },
+            enviar:function(){
+                console.log(JSON.stringify(this.grupos));
+            }
+        }
+
+    })
+</script>
